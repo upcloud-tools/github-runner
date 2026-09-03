@@ -1,0 +1,56 @@
+name: Build Runner Image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "build.sh"
+      - "Containerfile"
+      - ".github/workflows/build.yml"
+  workflow_dispatch:
+    inputs:
+      minors:
+        description: Comma-separated kubectl minors to bake (empty = script default)
+        required: false
+  schedule:
+    - cron: "0 6 * * *" # Daily at 06:00 UTC
+
+permissions:
+  contents: read
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE: upcloud-tools/github-runner
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: true
+
+      - name: Log in to GHCR
+        uses: ./.github/actions/ghcr-login
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+
+      - name: Restore kubectl download cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/github-runner
+          key: kubectl-${{ github.run_id }}
+          restore-keys: kubectl-
+
+      - name: Build image
+        env:
+          KUBECTL_MINORS: ${{ inputs.minors }}
+        run: chmod +x build.sh && ./build.sh ${KUBECTL_MINORS//,/ }
+
+      - name: Push image
+        run: buildah push "${REGISTRY}/${IMAGE}:latest"

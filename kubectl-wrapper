@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+M="${KUBECTL_VERSION:-}"
+if [ -z "$M" ]; then
+  exec /usr/local/bin/kubectl-latest "$@"
+fi
+
+# Normalize: v1.33.4 -> 1.33, 1.33.4 -> 1.33, v1.33 -> 1.33, 1.33 -> 1.33
+case "$M" in
+  v1.*.*|1.*.*) M="${M%.*}" ;;
+esac
+BIN="/usr/local/bin/kubectl-${M#v}"
+
+if [ ! -x "$BIN" ]; then
+  echo "kubectl: no binary for KUBECTL_VERSION='${KUBECTL_VERSION}'" >&2
+  echo "baked minors: $(printf '%s\n' /usr/local/bin/kubectl-[0-9]* | sed 's|.*kubectl-||' | tr '\n' ' ')" >&2
+  exit 1
+fi
+
+exec "$BIN" "$@"
