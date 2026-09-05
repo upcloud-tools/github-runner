@@ -7,7 +7,13 @@
 #          oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller \
 #          --namespace arc-system --create-namespace
 #
-#   2. Install the runner scale set (per repository):
+#   2. Create the GitHub config secret:
+#        kubectl create secret docker-registry ghcr-pull -n arc-runners \
+#          --docker-server=ghcr.io \
+#          --docker-username=arc \
+#          --docker-password=<read:packages PAT>
+# 
+#   3. Install the runner scale set (per repository):
 #        helm upgrade --install upcloud-runner \
 #          oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set \
 #          --namespace arc-runners --create-namespace \
@@ -44,9 +50,12 @@ minRunners: 0
 # Runner pod configuration
 template:
   spec:
+    imagePullSecrets:
+      - name: ghcr-pull
     containers:
       - name: runner
-        image: ghcr.io/actions/actions-runner:latest
+        image: ghcr.io/upcloud-tools/github-runner:latest
+        imagePullPolicy: Always
         command: ["/home/runner/run.sh"]
         resources:
           requests:
