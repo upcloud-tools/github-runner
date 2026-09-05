@@ -1,0 +1,23 @@
+---
+# UpCloudNodeClass for GitHub Actions self-hosted runners.
+# Matches the ARC runner scale set's nodeSelector (gh-runner: "yes") defined in values.yaml.
+#
+# Apply with: kubectl apply -f upcloudnodeclass-github-runner.yaml
+apiVersion: karpenter.k8s.upcloud/v1alpha2
+kind: UpCloudNodeClass
+metadata:
+  name: github-runner
+spec:
+  # Required: UpCloud zone for the runner nodes (e.g. de-fra1, fi-hel1, uk-lon1, us-chi1).
+  # Must match the zone of the UKS cluster referenced by the chart's config.clusterUUID.
+  zone: de-fra1
+
+  # STARTER-4xCPU-8GB: 4 vCPU / 8 GB RAM. Bundled storage — do NOT set storage.
+  plan: STARTER-4xCPU-8GB
+
+  # Propagated to the nodes so the ARC runner pods (nodeSelector gh-runner: "yes") schedule here.
+  labels:
+    gh-runner: "yes"
+
+  # storage is intentionally omitted: STARTER is a bundled-storage plan, and the
+  # provider uses the plan's bundled disk automatically (provider v1.0.3+).

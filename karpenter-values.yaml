@@ -1,0 +1,28 @@
+---
+config:
+  # Required: UUID of the UKS cluster Karpenter manages.
+  # Replace with your real cluster UUID (format 0dxxxxxx-xxxx-4xxx-...).
+  clusterUUID: ""
+
+  # OS template. Defaults to UKS Debian 13, which is what runner nodes want.
+  templateUUID: 01000000-0000-4000-8000-000160150100
+
+  # Authentication: pick ONE.
+  # (a) Reference a pre-created Secret that holds the UpCloud API token:
+  auth:
+    existingSecret: upcloud
+  # (b) Or let the chart create the Secret from an inline token (avoid committing secrets):
+  # auth:
+  #   token: "<UPCLOUD_API_TOKEN>"
+
+# Node claim TTL (alpha): expires claims before the hourly billing boundary.
+# Leave disabled unless you want provider-managed node lifetime instead of Karpenter consolidation.
+nodeclaimTTL:
+  enabled: false
+  ttl: 50m
+
+# Managed separately as manifests (see files above).
+nodeClass:
+  enabled: false
+nodePool:
+  enabled: false
