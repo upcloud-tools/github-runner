@@ -1,0 +1,58 @@
+---
+# GitHub Actions Runner Controller — Runner Scale Set configuration
+#
+# Prerequisites:
+#   1. Install the controller (one-time per cluster):
+#        helm upgrade --install arc \
+#          oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller \
+#          --namespace arc-system --create-namespace
+#
+#   2. Install the runner scale set (per repository):
+#        helm upgrade --install upcloud-runner \
+#          oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set \
+#          --namespace arc-runners --create-namespace \
+#          --values values.yaml
+#
+# Requires a PAT with repo scope, or a GitHub App installation.
+# See: https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller
+
+# Repository-level runner (change to org-level URL if preferred)
+githubConfigUrl: https://github.com/upcloud-tools
+
+# Runner labels for workflow targeting
+scaleSetLabels:
+  - self-hosted
+  - linux
+  - upcloud
+
+# Authentication via GitHub PAT (alternative: GitHub App)
+githubConfigSecret:
+  github_token: ""
+
+# Reference the controller service account explicitly to avoid discovery issues
+controllerServiceAccount:
+  namespace: arc-system
+  name: arc-gha-rs-controller
+
+containerMode:
+  type: kubernetes-novolume
+  
+# Autoscaling limits
+maxRunners: 5
+minRunners: 0
+
+# Runner pod configuration
+template:
+  spec:
+    containers:
+      - name: runner
+        image: ghcr.io/actions/actions-runner:latest
+        command: ["/home/runner/run.sh"]
+        resources:
+          requests:
+            cpu: "1"
+            memory: "2Gi"
+          limits:
+            memory: "8Gi"
+    nodeSelector:
+      gh-runner: "yes"
