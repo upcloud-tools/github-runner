@@ -8,6 +8,8 @@ on:
       - "build.sh"
       - "Containerfile"
       - ".github/workflows/build.yml"
+      - ".github/actions"
+      - ".gitmodules"
   workflow_dispatch:
     inputs:
       minors:
