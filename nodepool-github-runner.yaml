@@ -31,4 +31,4 @@ spec:
       expireAfter: 24h
   disruption:
     consolidationPolicy: WhenEmpty
-    consolidateAfter: 50m
+    consolidateAfter: 30m
