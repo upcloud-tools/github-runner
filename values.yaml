@@ -44,7 +44,7 @@ containerMode:
   type: kubernetes-novolume
   
 # Autoscaling limits
-maxRunners: 20
+maxRunners: 50
 minRunners: 0
 
 # Runner pod configuration
@@ -53,6 +53,7 @@ template:
     containers:
       - name: runner
         image: ghcr.io/actions/actions-runner:latest
+        imagePullPolicy: IfNotPresent
         command: ["/home/runner/run.sh"]
         resources:
           requests:
