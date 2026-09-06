@@ -44,18 +44,15 @@ containerMode:
   type: kubernetes-novolume
   
 # Autoscaling limits
-maxRunners: 5
+maxRunners: 20
 minRunners: 0
 
 # Runner pod configuration
 template:
   spec:
-    imagePullSecrets:
-      - name: ghcr-pull
     containers:
       - name: runner
-        image: ghcr.io/upcloud-tools/github-runner:latest
-        imagePullPolicy: Always
+        image: ghcr.io/actions/actions-runner:latest
         command: ["/home/runner/run.sh"]
         resources:
           requests:
