@@ -19,5 +19,5 @@ spec:
   labels:
     gh-runner: "yes"
 
-  # storage is intentionally omitted: STARTER is a bundled-storage plan, and the
+  # storage is intentionally omitted: PREMIUM is a bundled-storage plan, and the
   # provider uses the plan's bundled disk automatically (provider v1.0.3+).
