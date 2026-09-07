@@ -12,8 +12,8 @@ spec:
   # Must match the zone of the UKS cluster referenced by the chart's config.clusterUUID.
   zone: de-fra1
 
-  # STARTER-4xCPU-8GB: 4 vCPU / 8 GB RAM. Bundled storage — do NOT set storage.
-  plan: STARTER-4xCPU-8GB
+  # PREMIUM-2xCPU-4GB: 2 vCPU / 4 GB RAM. Bundled storage — do NOT set storage.
+  plan: PREMIUM-2xCPU-4GB
 
   # Propagated to the nodes so the ARC runner pods (nodeSelector gh-runner: "yes") schedule here.
   labels:

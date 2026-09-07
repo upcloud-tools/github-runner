@@ -1,6 +1,6 @@
 ---
 # NodePool for GitHub Actions self-hosted runners.
-# References the github-runner UpCloudNodeClass and restricts to the STARTER-4xCPU-8GB plan.
+# References the github-runner UpCloudNodeClass and restricts to the PREMIUM-2xCPU-4GB plan.
 #
 # Apply with: kubectl apply -f nodepool-github-runner.yaml
 apiVersion: karpenter.sh/v1
@@ -26,7 +26,7 @@ spec:
           values: ["linux"]
         - key: node.kubernetes.io/instance-type
           operator: In
-          values: ["STARTER-4xCPU-8GB"]
+          values: ["PREMIUM-2xCPU-4GB"]
       # Max node lifetime. Lower (e.g. 24h) for fresher OS on every runner; 720h is the chart default.
       expireAfter: 24h
   disruption:
