@@ -13,6 +13,10 @@ spec:
       labels:
         gh-runner: "yes"
     spec:
+      taints:
+        - key: gh-runner
+          value: "yes"
+          effect: NoSchedule
       nodeClassRef:
         group: karpenter.k8s.upcloud
         kind: UpCloudNodeClass
@@ -27,7 +31,7 @@ spec:
         - key: node.kubernetes.io/instance-type
           operator: In
           values: ["PREMIUM-2xCPU-4GB"]
-      # Max node lifetime. Lower (e.g. 24h) for fresher OS on every runner; 720h is the chart default.
+      # Max node lifetime. Lower (e.g. 24h) for fresher OS on every runner.
       expireAfter: 24h
   disruption:
     consolidationPolicy: WhenEmpty

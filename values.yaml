@@ -7,13 +7,7 @@
 #          oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller \
 #          --namespace arc-system --create-namespace
 #
-#   2. Create the GitHub config secret:
-#        kubectl create secret docker-registry ghcr-pull -n arc-runners \
-#          --docker-server=ghcr.io \
-#          --docker-username=arc \
-#          --docker-password=<read:packages PAT>
-# 
-#   3. Install the runner scale set (per repository):
+#   2. Install the runner scale set (per repository):
 #        helm upgrade --install upcloud-runner \
 #          oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set \
 #          --namespace arc-runners --create-namespace \
@@ -31,9 +25,7 @@ scaleSetLabels:
   - linux
   - upcloud
 
-# Authentication via GitHub PAT (alternative: GitHub App)
-githubConfigSecret:
-  github_token: ""
+githubConfigSecret: app-secret
 
 # Reference the controller service account explicitly to avoid discovery issues
 controllerServiceAccount:
@@ -42,7 +34,7 @@ controllerServiceAccount:
 
 containerMode:
   type: kubernetes-novolume
-  
+
 # Autoscaling limits
 maxRunners: 50
 minRunners: 0
@@ -63,3 +55,8 @@ template:
             memory: "8Gi"
     nodeSelector:
       gh-runner: "yes"
+    tolerations:
+      - key: gh-runner
+        operator: Equal
+        value: "yes"
+        effect: NoSchedule
